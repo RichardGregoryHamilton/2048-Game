@@ -1,8 +1,19 @@
-require 'io/console'
-require 'colorize'
+['io/console', 'colorize'].each{|g|require g}
 
 
 @board = Array.new(4) { [0,0,0,0] }                          # Creates a 4 X 4 game board
+
+# Creates a hash of achievements with the keys representing their names and values representing their descriptions
+
+@achievements = {16 => "Unlock the 16 Tile", 32 => "Unlock the 32 Tile", 64 => "Unlock the 64 Tile", 128 => "Unlock the 128 Tile",
+256 => "Unlock the 256 Tile", 512 => "Unlock the 512 Tile", 1024 => "Unlock the 1024 Tile", 2048 => "Unlock the 2048 Tile",
+4096 => "Unlock the 4096 Tile", 8192 => "Unlock the 8192 Tile", 16384 => "Unlock the 16384 Tile", "Score 500" => "Earn more than 500 points",
+"Score 1000" => "Earn more than 1000 points", "Score 2000" => "Earn more than 2000 points", "Score 5000" => "Earn more than 5000 points",
+"Score 10000" => "Earn more than 10000 points", "HIGHEST SCORE" => "Earn more than 20000 points"}
+
+# At first, the player hasn't earned any achievements
+
+@unlocked = []
 
 # This method will update the board before every turn
 
@@ -12,8 +23,8 @@ def draw_board
   
   puts " Score: #{@board.flatten.inject(:+) == [@board.flatten.inject(:+), @scores.max].max ? \
   (@board.flatten.inject(:+)).to_s.yellow : @board.flatten.inject(:+)} High Score: #{@board.flatten.inject(:+) == [@board.flatten.inject(:+), @scores.max].max ? \
-  (@board.flatten.inject(:+)).to_s.yellow : [@board.flatten.inject(:+), @scores.max].max}"
-  puts " ______________________________"
+  (@board.flatten.inject(:+)).to_s.yellow : [@board.flatten.inject(:+), @scores.max].max} Achievements: #{@unlocked.count}"
+  puts " ________________________________________"
   
   (0..3).each{|ii|
     print '|'                                                # For every row add a separator
@@ -212,11 +223,31 @@ def play
   end
 end
 
+# When the game ends, you earn achievements if you did well
+
+def earn_achievements
+  [16,32,64,128,256,512,1024,2048,4096,8192,16384].each do |a|
+    unless @unlocked.include?(@achievements[a])
+      @unlocked << @achievements[a] if (@board.flatten.include?(a))
+	end
+  end
+  
+  [500,1000,2000,5000,10000].each do |score|
+    unless @unlocked.include?(@achievements["Score #{score}"])
+      @unlocked << @achievements["Score #{score}"] if @board.flatten.inject(:+) >= score
+    end
+  end
+  
+  unless @unlocked.include?(@achievements["HIGHEST SCORE"])
+    @unlocked << @achievements["HIGHEST SCORE"] if @board.flatten.inject(:+) >= 20000
+  end
+  
+end
 
 # Score is calculated when the game ends
 
 def end_game
-
+  
   if @win
     puts "Congratulations, you reached the FINAL tile."
     puts "Your final score was #{@board.flatten.inject(:+)}."
@@ -229,23 +260,35 @@ def end_game
   
 end
 
-# Starts the game
+# The sequences of events for a game
 
-play
-end_game
+def play_cycle
+  play
+  earn_achievements
+  end_game
+end
 
-response = '' # Initialize variable
+play_cycle                                                  # Starts the game
+
+response = ''                                               # Initialize variable
 
 while response == '' || response == 'y'
-  puts "HIGH SCORE: #{@scores.max}"
+  puts "HIGH SCORE: #{@scores.max}\n"
   @board = Array.new(4){[0,0,0,0]}
   puts "Would you like to play again?"
   puts "Press y for 'Yes' and n for 'No'"
   response = gets.chomp
-  # Repeats the game if player presses Yes
   
-  if response == 'y'
-    play
-	end_game
+  # If a player presses A, a list of the achievements they've earned will show up
+  
+  while response == 'a'
+    puts "\n"
+    puts @unlocked
+	puts "\n"
+	response = ''
   end
+  
+  # Repeats the game if player presses Yes
+  play_cycle if response == 'y'
+
 end
