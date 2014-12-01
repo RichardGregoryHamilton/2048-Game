@@ -9,12 +9,16 @@ How to Play
 2. Change into your 2048-Game directory
 3. Type in ruby 2048.rb in your command line
 
-The following controls can be used
+In Game Controls
 * a - Move tiles to the left
 * d - Move tiles to the right
 * w - Move tiles up
 * s - Move tiles down
+
+Post Game Controls
 * a - Shows a list of the achievements you've earned
+* y - Play the game again
+* n - Exit the game
 
 Rules
 =====
@@ -42,8 +46,8 @@ Your total score is the sum of the values of the tiles on the board.
 Example
 2  8  2  4
 4  2  16 2
--  -  -  4
--  -  -  2
+E  E  E  4
+E  E  E  2
 
 The sum of the numbers on the screen is 46, so your score will be 46.
 
@@ -70,3 +74,5 @@ Achievement Name     Achievement Description
 * "HIGHEST SCORE"    "Earn more than 20000 points"
  
 There are currently a total of 17 achievements you can earn in this game. The higher tile achievements are exceedingly difficult to earn and require excellent strategy and skill.
+
+2048 will remember your achievements if you choose to play again. The number of achievements you've earned will appear in the game board. If you exit a game, however, they will NOT be saved.
