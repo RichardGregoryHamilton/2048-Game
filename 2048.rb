@@ -1,6 +1,5 @@
 ['io/console', 'colorize'].each{|g|require g}
 
-
 @board = Array.new(4) { [0,0,0,0] }                          # Creates a 4 X 4 game board
 
 # Creates a hash of achievements with the keys representing their names and values representing their descriptions
@@ -11,27 +10,23 @@
 "Score 1000" => "Earn more than 1000 points", "Score 2000" => "Earn more than 2000 points", "Score 5000" => "Earn more than 5000 points",
 "Score 10000" => "Earn more than 10000 points", "HIGHEST SCORE" => "Earn more than 20000 points"}
 
-# At first, the player hasn't earned any achievements
+@unlocked = []                                               # At first, the player hasn't earned any achievements
 
-@unlocked = []
-
-# This method will update the board before every turn
-
-def draw_board
+def draw_board                                               # This method will update the board before every turn
 
   # Color codes a new high score
   
-  puts " Score: #{@board.flatten.inject(:+) == [@board.flatten.inject(:+), @scores.max].max ? \
+  puts "\t\t Score: #{@board.flatten.inject(:+) == [@board.flatten.inject(:+), @scores.max].max ? \
   (@board.flatten.inject(:+)).to_s.yellow : @board.flatten.inject(:+)} High Score: #{@board.flatten.inject(:+) == [@board.flatten.inject(:+), @scores.max].max ? \
   (@board.flatten.inject(:+)).to_s.yellow : [@board.flatten.inject(:+), @scores.max].max} Achievements: #{@unlocked.count}"
-  puts " ________________________________________"
+  puts "\t\t ________________________________________"
   
   (0..3).each{|ii|
-    print '|'                                                # For every row add a separator
+    print "\t\t| "                                           # For every row add a separator
     (0..3).each{|jj|
   	  n = @board[ii][jj]                                     # Coordinates we will place tiles
 	  print color_num(n)                                     # Prints a color-coded number, see color_num method
-	  print '|'                                              # Add a separator for every cell on every row
+	  print '| '                                             # Add a separator for every cell on every row
 	}
     puts ""
   }
@@ -187,14 +182,18 @@ end
 # Event Sequence for every game
 
 def play
-  puts "Welcome to 2048!"
-  puts "Match powers of 2 by connecting ajacent identical numbers. Try to reach 2048"
-  puts "Press 'a' to move left"
-  puts "Press 'd' to move right"
-  puts "Press 'w' to move up"
-  puts "Press 's' to move down"
+
+  puts "\n\t\t Welcome to 2048!"
+  puts "\n\t\t RULES"
+  puts "\n\t\t Match powers of 2 by connecting ajacent identical numbers."
+  puts "\n\t\t CONTROLS"
+  puts "\n\t\t a - Move left"
+  puts "\t\t d - Move right"
+  puts "\t\t w - Move up"
+  puts "\t\t s - Move down"
+  puts "\n"
   
-  2.times { new_tile } # Start Off a game with two titles
+  2.times { new_tile }                                       # Start Off a game with two titles
   draw_board
   @win = true
   
@@ -249,12 +248,15 @@ end
 def end_game
   
   if @win
-    puts "Congratulations, you reached the FINAL tile."
-    puts "Your final score was #{@board.flatten.inject(:+)}."
+    puts "\t\t Congratulations! You reached the FINAL tile!".yellow
+    puts "\n\t\t Your final score was #{@board.flatten.inject(:+)}."
+	puts "\n\t\t Press 'a' to view your achievements!\n"
     @scores.push(@board.flatten.inject(:+))
   else
-    puts "There are no more ajacent tiles with the same number. The game is over."
-    puts "Your final score was #{@board.flatten.inject(:+)}."
+    puts "\t\t There are no more ajacent tiles with the same number.".red
+	puts "\t\t The game is over".red
+    puts "\n\t\t Your final score was #{@board.flatten.inject(:+)}."
+	puts "\n\t\t Press 'a' to view your achievements!\n"
     @scores.push(@board.flatten.inject(:+))
   end
   
@@ -273,22 +275,22 @@ play_cycle                                                  # Starts the game
 response = ''                                               # Initialize variable
 
 while response == '' || response == 'y'
-  puts "HIGH SCORE: #{@scores.max}\n"
+  puts "\t\t HIGH SCORE: #{@scores.max}\n"
   @board = Array.new(4){[0,0,0,0]}
-  puts "Would you like to play again?"
-  puts "Press y for 'Yes' and n for 'No'"
+  puts "\n\t\t Would you like to play again?"
+  puts "\t\t Press y for 'Yes' and n for 'No'"
   response = gets.chomp
   
   # If a player presses A, a list of the achievements they've earned will show up
   
   while response == 'a'
-    puts "\n"
-    puts @unlocked
+    puts "\n\t\t ACHIEVEMENTS"
+	puts "\n"
+    @unlocked.each {|a| puts "\t\t " << a}
 	puts "\n"
 	response = ''
   end
   
-  # Repeats the game if player presses Yes
-  play_cycle if response == 'y'
+  play_cycle if response == 'y'                             # Repeats the game if player presses Yes
 
 end
