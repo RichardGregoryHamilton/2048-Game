@@ -33,13 +33,15 @@
     game_score.to_s.yellow
   end
 
-  def draw_board                                               # This method will update the board before every turn
-    
-    puts "\t\t Score: #{game_score == high_score ? colorize_score : game_score} " <<
+	def show_score
+		puts "\t\t Score: #{game_score == high_score ? colorize_score : game_score} " <<
          "High Score: #{game_score == high_score ? colorize_score : high_score} " <<
          "Achievements: #{@unlocked.count}"
     puts "\t\t ________________________________________"
-    
+	end
+	
+  def draw_board
+    show_score
     for x in 0..3
       print "\t\t| "
       for y in 0..3
@@ -68,30 +70,19 @@
     false
   end
 
-  # Color codes a number based on its values.
-
   def color_num(num)
     number = '%4.4s' % num                                     # Shifts number to the right a few spaces
     color = ""                                                 # Initialize color variable
     
-    case num
-      when 0     then color = "    "
-      when 2     then color = number.colorize(:white)
-      when 4     then color = number.colorize(:white)
-      when 8     then color = number.colorize(:light_red)
-      when 16    then color = number.colorize(:red)
-      when 32    then color = number.colorize(:light_yellow)
-      when 64    then color = number.colorize(:yellow)
-      when 128   then color = number.colorize(:light_cyan)
-      when 256   then color = number.colorize(:cyan)
-      when 512   then color = number.colorize(:light_green)
-      when 1024  then color = number.colorize(:green)
-      when 2048  then color = number.colorize(:light_blue)
-      when 4096  then color = number.colorize(:blue)
-      when 8192  then color = number.colorize(:light_magenta)
-      when 16384 then color = number.colorize(:magenta)
-      else abort "error"
-    end
+		numbers = [0]
+		(1..14).each { |n| numbers.push (2 ** n) }
+		colors = [:white, :white, :light_red, :red, :light_yellow, :yellow, :light_cyan,
+		:cyan, :light_green, :green, :light_blue, :blue, :light_magenta, :magenta]
+		colors_array = [numbers.zip(colors)].flatten(1)
+		
+		for i in 0..colors_array.length-1
+			color = number.colorize(colors_array[i][1]) if num == colors_array[i][0]
+		end
     
     color.underline
   end
