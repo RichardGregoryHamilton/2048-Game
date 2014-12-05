@@ -1,6 +1,6 @@
 ['io/console', 'colorize'].each{ |g| require g }
 
-  @achievements = { 
+  @achievements = {
                     16     => 'Unlock the 16 Tile',
                     32     => 'Unlock the 32 Tile',
                     64     => 'Unlock the 64 Tile',
@@ -28,7 +28,7 @@
   @milestones = [500, 1_000, 2_000, 4_000, 8_000, 16_000]
   @colors     = %i(white white light_red red light_yellow yellow light_cyan
                 cyan light_green green light_blue blue light_magenta magenta)
-  
+
   def game_score
     @board.flatten.inject(:+)
   end
@@ -50,23 +50,20 @@
 
   def draw_board
     show_score
-    for x in 0..3
+    (0..3).each do |x|
       print "\t\t| "
-      for y in 0..3
-        number = @board[x][y]
-        print color_num(number) << "| "
-      end
-      puts ""
+      (0..3).each { |y| print colorize_number(@board[x][y]) << '| ' }
+      puts ''
     end
-    puts ""
+    puts ''
   end
 
   def new_tile
     tile = [*1..2].sample * 2
     x    = [*0..3].sample
     y    = [*0..3].sample
-    for i in 0..3
-      for j in 0..3
+    (0..3).each do |i|
+      (0..3).each do |j|
         x1 = (x + i) % 4
         y1 = (y + j) % 4
         if @board[x1][y1] == 0
@@ -75,12 +72,11 @@
         end
       end
     end
-    false
   end
 
-  def color_num(num)
+  def colorize_number(num)
     number = '%4.4s' % num
-    color = ""
+    color = ''
     colors_array = [@numbers.zip(@colors)].flatten(1)
 
     for i in 0..colors_array.length-1
@@ -110,7 +106,7 @@
 
   def shift_left(line)
     new_line = []
-    line.each { |l| new_line << l unless l.zero? }
+    line.each { |line| new_line << line unless line.zero? }
     new_line << 0 until new_line.size == 4
     new_line
   end
@@ -119,9 +115,9 @@
 
   def move_left
     new_board = Marshal.load(Marshal.dump(@board))
-    for i in 0..3
-      for j in 0..3
-        for k in j..2
+    (0..3).each do |i|
+      (0..3).each do |j|
+        (j..2).each do |k|
           if @board[i][k + 1] == 0
             next
           elsif @board[i][j] == @board[i][k + 1]
@@ -186,7 +182,6 @@
   def get_tiles
     2.times { new_tile }
     draw_board
-    @win = true
   end
 
   def make_move
@@ -266,21 +261,22 @@
 
   def win_message
     puts "\t\t Congratulations! You reached the FINAL tile!".yellow
-    puts "\n\t\t Your final score was #{game_score}."
-    puts "\n\t\t Press 'a' to view your achievements!\n"
-    @scores << game_score
   end
 
   def lose_message
     puts "\t\t There are no more ajacent tiles with the same number.".red
     puts "\t\t The game is over".red
-    puts "\n\t\t Your final score was #{game_score}."
+  end
+
+  def game_over_message
+     puts "\n\t\t Your final score was #{game_score}."
     puts "\n\t\t Press 'a' to view your achievements!\n"
-    @scores << game_score
   end
 
   def end_game
     @win ? win_message : lose_message
+    game_over_message
+    @scores << game_score
   end
 
   # The sequences of events for a game
